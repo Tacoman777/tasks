@@ -8,9 +8,18 @@ import { Question, QuestionType } from "./interfaces/question";
 export function makeBlankQuestion(
     id: number,
     name: string,
-    type: QuestionType
+    type: QuestionType,
 ): Question {
-    return {};
+    return {
+        body: "",
+        expected: "",
+        id: id,
+        name: name,
+        type: type,
+        options: [],
+        points: 1,
+        published: false,
+    };
 }
 
 /**
@@ -21,7 +30,9 @@ export function makeBlankQuestion(
  * HINT: Look up the `trim` and `toLowerCase` functions.
  */
 export function isCorrect(question: Question, answer: string): boolean {
-    return false;
+    const ea = question.expected.toLowerCase().trim();
+    const a = answer.toLowerCase().trim();
+    return a === ea ? true : false;
 }
 
 /**
@@ -31,7 +42,11 @@ export function isCorrect(question: Question, answer: string): boolean {
  * be exactly one of the options.
  */
 export function isValid(question: Question, answer: string): boolean {
-    return false;
+    const a = answer;
+    const q = question;
+    const valid =
+        q.options.find((str: string): boolean => str === a) ? true : false;
+    return q.type === "multiple_choice_question" ? valid : true;
 }
 
 /**
@@ -41,7 +56,9 @@ export function isValid(question: Question, answer: string): boolean {
  * name "My First Question" would become "9: My First Q".
  */
 export function toShortForm(question: Question): string {
-    return "";
+    const q = question;
+    const newName = q.name.substring(0, 10);
+    return q.id + ": " + newName;
 }
 
 /**
@@ -62,7 +79,23 @@ export function toShortForm(question: Question): string {
  * Check the unit tests for more examples of what this looks like!
  */
 export function toMarkdown(question: Question): string {
-    return "";
+    const q = question;
+    const mq =
+        "# " +
+        q.name +
+        "\n" +
+        q.body +
+        "\n" +
+        "- " +
+        q.options[0] +
+        "\n" +
+        "- " +
+        q.options[1] +
+        "\n" +
+        "- " +
+        q.options[2];
+    const sq = "# " + q.name + "\n" + q.body;
+    return q.type === "multiple_choice_question" ? mq : sq;
 }
 
 /**
@@ -70,7 +103,11 @@ export function toMarkdown(question: Question): string {
  * `newName`.
  */
 export function renameQuestion(question: Question, newName: string): Question {
-    return question;
+    const nQ = {
+        ...question,
+        name: newName,
+    };
+    return nQ;
 }
 
 /**
@@ -79,7 +116,9 @@ export function renameQuestion(question: Question, newName: string): Question {
  * published; if it was published, now it should be not published.
  */
 export function publishQuestion(question: Question): Question {
-    return question;
+    const nQ = { ...question };
+    nQ.published ? (nQ.published = false) : (nQ.published = true);
+    return nQ;
 }
 
 /**
@@ -89,7 +128,13 @@ export function publishQuestion(question: Question): Question {
  * The `published` field should be reset to false.
  */
 export function duplicateQuestion(id: number, oldQuestion: Question): Question {
-    return oldQuestion;
+    const nQ = {
+        ...oldQuestion,
+        id: id,
+        name: "Copy of " + oldQuestion.name,
+        published: false,
+    };
+    return nQ;
 }
 
 /**
@@ -100,7 +145,11 @@ export function duplicateQuestion(id: number, oldQuestion: Question): Question {
  * Check out the subsection about "Nested Fields" for more information.
  */
 export function addOption(question: Question, newOption: string): Question {
-    return question;
+    const nQ = {
+        ...question,
+        options: [...question.options, newOption],
+    };
+    return nQ;
 }
 
 /**
@@ -115,7 +164,14 @@ export function mergeQuestion(
     id: number,
     name: string,
     contentQuestion: Question,
-    { points }: { points: number }
+    { points }: { points: number },
 ): Question {
-    return contentQuestion;
+    const nQ = {
+        ...contentQuestion,
+        points: points,
+        id: id,
+        name: name,
+        published: false,
+    };
+    return nQ;
 }
